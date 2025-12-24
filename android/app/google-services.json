@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1017093003790",
+    "project_id": "benafood-16b7b",
+    "storage_bucket": "benafood-16b7b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017093003790:android:52822dd0213f7202c7ba5f",
+        "android_client_info": {
+          "package_name": "com.example.bena_food"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK8T8X6vvH6gyZKG_K8OfxkxwLaiPrXEU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
