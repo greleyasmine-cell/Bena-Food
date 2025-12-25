@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart'; // إضافة مكتبة الـ Storage
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'auth_state.dart';
 
@@ -8,7 +9,15 @@ class AuthCubit extends Cubit<AuthState> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseStorage storage = FirebaseStorage.instance; // تعريف الـ Storage
 
+  String? selectedCountry;
+  String? selectedWilaya;
+  String? selectedType;
+
+  void updateCountry(String country) => selectedCountry = country;
+  void updateWilaya(String wilaya) => selectedWilaya = wilaya;
+  void updateType(String type) => selectedType = type;
 
   Future<void> login({required String email, required String password}) async {
     emit(state.copyWith(loginStatus: LoginStatus.loading));
@@ -19,8 +28,7 @@ class AuthCubit extends Cubit<AuthState> {
     })
         .catchError((error) {
       if (error is FirebaseAuthException) {
-        print(
-            "Error Code: ${error.code}");
+        print("Error Code: ${error.code}");
         print("Error Message: ${error.message}");
       }
       emit(
@@ -41,23 +49,27 @@ class AuthCubit extends Cubit<AuthState> {
     required String wilaya,
   }) async {
     emit(state.copyWith(registerStatus: RegisterStatus.loading));
-    auth
-        .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) {
-      firestore.collection('users').doc(value.user?.uid).set({
+
+    auth.createUserWithEmailAndPassword(email: email, password: password).then((value) async {
+
+      await firestore.collection('users').doc(value.user?.uid).set({
+        'uid': value.user?.uid,
         'email': email,
-        'firstName': firstName,
+        'fullName': firstName,
         'phone': phone,
         'country': country,
         'wilaya': wilaya,
+        'userType': selectedType,
+        //'profileImage': imageUrl,
       });
+
       emit(state.copyWith(registerStatus: RegisterStatus.success));
-    })
-        .catchError((error) {
+    }).catchError((error) {
       print(error);
-      emit(state.copyWith(registerStatus: RegisterStatus.failure));
+      emit(state.copyWith(
+        registerStatus: RegisterStatus.failure,
+        errorMessage: error.toString(),
+      ));
     });
   }
-
-
 }

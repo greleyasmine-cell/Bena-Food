@@ -2,6 +2,7 @@ import 'package:bena_food/Feature/Auth/login_page.dart';
 import 'package:bena_food/Feature/Auth/manager/auth_cubit.dart';
 import 'package:bena_food/Feature/Edit/Edit%20Profile/edit_profile.dart';
 import 'package:bena_food/Feature/Edit/Forgot%20Password/forgot_password.dart';
+import 'package:bena_food/Feature/Profile/manager/home_cubit.dart';
 import 'package:bena_food/Feature/Profile/profile_user/user_profile_page.dart';
 import 'package:bena_food/Feature/Sign%20Up/signUp.dart';
 import 'package:bena_food/Feature/Sign%20Up/sign_up_profile_page.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(create: (context) => HomeCubit()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
