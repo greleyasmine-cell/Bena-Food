@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart'; // إضافة مكتبة الـ Storage
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'auth_state.dart';
 
@@ -9,7 +9,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final FirebaseStorage storage = FirebaseStorage.instance; // تعريف الـ Storage
+  final FirebaseStorage storage = FirebaseStorage.instance;
 
   String? selectedCountry;
   String? selectedWilaya;
