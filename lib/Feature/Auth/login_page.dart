@@ -76,8 +76,10 @@ class LoginPage extends StatelessWidget {
                    ],
                  ),
                   TextButton(onPressed: (){
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context)=>ForgotPassword() ));
+                    Navigator.pushAndRemoveUntil(context,
+                        MaterialPageRoute(builder: (context) => ForgotPassword()),
+
+                        (route)=> false);
                   },
                       child: Text("Forgot Password?",style: TextStyle(color: AppColors.secondary),))
                 ],
