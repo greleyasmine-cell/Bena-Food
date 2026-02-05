@@ -19,27 +19,51 @@ class AuthCubit extends Cubit<AuthState> {
   void updateWilaya(String wilaya) => selectedWilaya = wilaya;
   void updateType(String type) => selectedType = type;
 
+  // --- دالة تسجيل الدخول المعدلة ---
   Future<void> login({required String email, required String password}) async {
     emit(state.copyWith(loginStatus: LoginStatus.loading));
-    auth
-        .signInWithEmailAndPassword(email: email, password: password)
-        .then((value) {
-      emit(state.copyWith(loginStatus: LoginStatus.success));
-    })
-        .catchError((error) {
+
+    // 1. تسجيل الدخول عبر Firebase Auth
+    auth.signInWithEmailAndPassword(email: email, password: password).then((value) {
+
+      // 2. جلب بيانات المستخدم من Firestore بعد نجاح الـ Auth
+      firestore.collection('users').doc(value.user?.uid).get().then((userDoc) {
+        if (userDoc.exists) {
+          // استخراج نوع المستخدم (Admin أو User)
+          String type = userDoc.get('userType') ?? 'User';
+          String name = userDoc.data()?['fullName'] ?? 'Restaurant Owner';
+          value.user?.updateDisplayName(name);
+          // 3. تحديث الحالة بالنجاح مع نوع المستخدم
+          emit(state.copyWith(
+            loginStatus: LoginStatus.success,
+            userType: type,
+
+          ));
+        } else {
+          emit(state.copyWith(
+            loginStatus: LoginStatus.failure,
+            errorMessage: "User data not found in database",
+          ));
+        }
+      }).catchError((error) {
+        emit(state.copyWith(
+          loginStatus: LoginStatus.failure,
+          errorMessage: "Failed to fetch user role",
+        ));
+      });
+
+    }).catchError((error) {
       if (error is FirebaseAuthException) {
         print("Error Code: ${error.code}");
-        print("Error Message: ${error.message}");
       }
-      emit(
-        state.copyWith(
-          loginStatus: LoginStatus.failure,
-          errorMessage: error.toString(),
-        ),
-      );
+      emit(state.copyWith(
+        loginStatus: LoginStatus.failure,
+        errorMessage: error.toString(),
+      ));
     });
   }
 
+  // --- دالة التسجيل ---
   void register({
     required String email,
     required String password,
@@ -51,7 +75,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(registerStatus: RegisterStatus.loading));
 
     auth.createUserWithEmailAndPassword(email: email, password: password).then((value) async {
-
+      // حفظ البيانات في Firestore
       await firestore.collection('users').doc(value.user?.uid).set({
         'uid': value.user?.uid,
         'email': email,
@@ -59,8 +83,7 @@ class AuthCubit extends Cubit<AuthState> {
         'phone': phone,
         'country': country,
         'wilaya': wilaya,
-        'userType': selectedType,
-        //'profileImage': imageUrl,
+        'userType': selectedType, // تأكدي أن هذا المتغير تم تحديثه قبل نداء register
       });
 
       emit(state.copyWith(registerStatus: RegisterStatus.success));
