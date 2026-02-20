@@ -15,6 +15,8 @@ import 'package:bena_food/Feature/User/Food%20List/manager/user_food_cubit.dart'
 import 'package:bena_food/Feature/User/Order/manager/orders_cubit.dart';
 import 'package:bena_food/Feature/User/cart/manager/cart_cubit.dart';
 import 'package:bena_food/Feature/User/manager/user_home_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +25,10 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
   runApp(const MyApp());
 }
 
@@ -53,59 +59,28 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: BlocBuilder<AuthCubit, AuthState>(
-          builder: (context, state) {
+        home: BlocBuilder<AuthCubit,AuthState>(
+            builder: (context,state){
+              if(state.authStatus == AuthStatus.authenticated){
+                context.read<HomeCubit>().getProfile();
+                return BlocBuilder<HomeCubit,HomeState>(
+                    builder:(context,homeState) {
+                      if (homeState.userModel == null) {
+                        return UserLayout();
+                      }
+                      return homeState.userModel?.userType == 'Admin'
+                          ? AdminLayout()
+                          : UserLayout();
 
-            if (state.authStatus == AuthStatus.authenticated) {
-              return BlocBuilder<HomeCubit, HomeState>(
-                builder: (context, homeState) {
-
-                  if (homeState.getProfileStatus == GetProfileStatus.initial) {
-                    context.read<HomeCubit>().getProfile();
-                  }
-
-
-                  if (homeState.getProfileStatus == GetProfileStatus.success) {
-                    return homeState.userModel?.userType == 'Admin'
-                        ? const AdminLayout()
-                        : const UserLayout();
-                  }
-
-
-                  if (homeState.getProfileStatus == GetProfileStatus.failure) {
-                    return Scaffold(
-                      body: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Error: ${homeState.errorMessage}"),
-                            ElevatedButton(
-                              onPressed: () => context.read<HomeCubit>().getProfile(),
-                              child: const Text("Retry"),
-                            ),
-                          ],
-                        ),
-                      ),
+                    },
                     );
-                  }
-
-
-                  return const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  );
-                },
+              }
+              return state.authStatus == AuthStatus.unauthenticated
+                  ? LoginPage()
+                  : Scaffold(
+                body: Center(child: CircularProgressIndicator(color: AppColors.primary,),),
               );
-            }
-
-            if (state.authStatus == AuthStatus.unauthenticated) {
-              return LoginPage();
-            }
-
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          },
-        ),
+            }),
       ),
     );
   }

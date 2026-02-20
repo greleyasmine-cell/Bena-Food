@@ -16,11 +16,13 @@ class UserCartPage extends StatelessWidget {
       child: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
           if (state.cartItems.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                  child: Row(
+
                     children: [
                       IconButton(icon: Icon(Icons.arrow_back), onPressed: onBack),
 
@@ -38,19 +40,19 @@ class UserCartPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 200,),
-                  Icon(Icons.remove_shopping_cart,color: AppColors.primary,size: 60,),
-                  SizedBox(height: 20,),
-                  Text(
-                    "Your cart is empty",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
+                ),
+                SizedBox(height: 300,),
+                Icon(Icons.remove_shopping_cart,color: AppColors.primary,size: 60,),
+                SizedBox(height: 20,),
+                Text(
+                  "Your cart is empty",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
           return Column(
