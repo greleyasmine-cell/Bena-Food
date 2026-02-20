@@ -14,6 +14,7 @@ class PaymentPage extends StatelessWidget {
   final double totalAmount;
   final VoidCallback onBack;
   final String restaurantName;
+  final String ownerId;
   final Function(String status) onOrderStatusChanged;
 
 
@@ -23,6 +24,7 @@ class PaymentPage extends StatelessWidget {
     required this.onBack,
      required this.onOrderStatusChanged,
     required this.restaurantName ,
+     required this.ownerId,
   });
 
   @override
@@ -125,6 +127,7 @@ class PaymentPage extends StatelessWidget {
                              phone: phoneController.text,
                              address: addressController.text,
                              restaurantName:restaurantName,
+                           ownerId: ownerId,
                          );
                        }else{
                          Fluttertoast.showToast(msg: "Please fill all contact info",

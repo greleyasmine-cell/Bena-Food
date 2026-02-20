@@ -49,6 +49,7 @@ class CartCubit extends Cubit<CartState> {
     required String phone,
     required String address,
     required String restaurantName,
+    required String ownerId,
   }) async {
 
     if (state.cartItems.isEmpty) return;
@@ -72,6 +73,7 @@ class CartCubit extends Cubit<CartState> {
         'orderId': DateTime.now().millisecondsSinceEpoch.toString().substring(5),
         'restaurantName': restaurantName,
         'userId': uid,
+        'ownerId': ownerId,
         'clientName': clientName,
         'phone': phone,
         'address': address,

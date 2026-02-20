@@ -33,6 +33,7 @@ class _UserLayoutState extends State<UserLayout> {
   Map<String, dynamic>? selectedFood;
   double totalCartPrice = 0.0;
   OrderModel? selectedOrder;
+  String? selectedOwnerId;
 
   @override
   void initState() {
@@ -75,9 +76,14 @@ class _UserLayoutState extends State<UserLayout> {
             navbarIndex = 0;
           });
         },
-        onOrderNow: (price) {
+        onOrderNow: (total,resName,ownerId){
           setState(() {
-            totalCartPrice = price;
+            totalCartPrice = total;
+            selectedRestaurant = {
+              'name' : resName,
+              'id' : selectedRestaurant?['id'],
+            };
+            selectedOwnerId = ownerId;
             displayIndex = 7;
           });
         },
@@ -106,6 +112,7 @@ class _UserLayoutState extends State<UserLayout> {
       currentWidget = PaymentPage(
         totalAmount: totalCartPrice,
         restaurantName: selectedRestaurant?['name'] ?? "Restaurant",
+        ownerId: selectedOwnerId ?? "",
         onBack: () => setState(() => displayIndex = 3),
         onOrderStatusChanged: (status) => setState(() => displayIndex = (status == "success") ? 8 : 9),
       );

@@ -1,5 +1,6 @@
 import 'package:bena_food/Feature/Admin/Orders/manager/admin_order_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdminOrderCubit extends Cubit<AdminOrderState> {
@@ -7,12 +8,15 @@ class AdminOrderCubit extends Cubit<AdminOrderState> {
 
 
   void fetchOrdersRealTime(String restaurantName) {
+    final String? adminId = FirebaseAuth.instance.currentUser?.uid;
+    if (adminId == null) return;
     emit(state.copyWith(status: AdminOrderStatus.loading));
 
 
     FirebaseFirestore.instance
         .collection('orders')
        // .where('restaurantName', isEqualTo: restaurantName)
+        .where('ownerId', isEqualTo: adminId)
         .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((snapshot) {

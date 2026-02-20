@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserCartPage extends StatelessWidget {
-  final Function(double) onOrderNow;
+  final Function(double total, String restaurantName, String ownerId) onOrderNow;
   final VoidCallback onBack;
   const UserCartPage({super.key,required this.onOrderNow,required this.onBack});
 
@@ -198,7 +198,14 @@ class UserCartPage extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        onOrderNow(state.totalPrice);
+                        if(state.cartItems.isNotEmpty){
+                          final firstItem = state.cartItems.first;
+                          onOrderNow(
+                            state.totalPrice,
+                            firstItem.restaurantName,
+                            firstItem.ownerId
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.amber,
