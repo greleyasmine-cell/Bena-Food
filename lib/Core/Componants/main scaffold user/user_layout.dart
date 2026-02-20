@@ -1,5 +1,8 @@
 import 'package:bena_food/Core/Componants/main%20scaffold%20user/main_scaffold.dart';
 import 'package:bena_food/Core/Models/order_model.dart';
+import 'package:bena_food/Feature/Edit/Edit%20Profile/edit_profile.dart';
+import 'package:bena_food/Feature/Edit/Forgot%20Password/forgot_password.dart';
+import 'package:bena_food/Feature/Profile/manager/home_cubit.dart';
 import 'package:bena_food/Feature/Profile/profile_user/user_profile_page.dart';
 import 'package:bena_food/Feature/User/Food%20List/food_details_page.dart';
 import 'package:bena_food/Feature/User/Food%20List/user_food_list.dart';
@@ -19,6 +22,7 @@ class UserLayout extends StatefulWidget {
   const UserLayout({super.key});
 
   @override
+
   State<UserLayout> createState() => _UserLayoutState();
 }
 
@@ -31,7 +35,14 @@ class _UserLayoutState extends State<UserLayout> {
   OrderModel? selectedOrder;
 
   @override
+  void initState() {
+    super.initState();
+
+    context.read<HomeCubit>().getProfile();
+  }
+  @override
   Widget build(BuildContext context) {
+    final user = context.watch<HomeCubit>().state.userModel;
     final List<Widget> pages = [
       UserHomePage(
         onRestaurantTap: (data) {
@@ -71,7 +82,14 @@ class _UserLayoutState extends State<UserLayout> {
           });
         },
       ),
-      UserProfilePage(),
+      UserProfilePage(
+        onForgotPasswordTap: () {
+          setState(() {
+            displayIndex = 11;
+          });
+        },
+        onEditProfileTap: ()=> setState(() => displayIndex = 12),
+      ),
     ];
     Widget currentWidget;
 
@@ -105,20 +123,36 @@ class _UserLayoutState extends State<UserLayout> {
           return TrackOrderPage(order: updatedOrder, onBack: () => setState(() => displayIndex = 1));
         },
       );
-    } else {
-
-      currentWidget = pages[displayIndex < pages.length ? displayIndex : 0];
+    } else if(displayIndex == 11){
+      currentWidget = ForgotPassword(
+        fromProfile: true,
+      );
     }
-    return MainScaffold(
-      currentIndex: navbarIndex,
-      onTap: (index) {
-        setState(() {
-          navbarIndex = index;
-          displayIndex = index;
-          // if (index != 0) selectedRestaurant = null;
-        });
-      },
-      child: currentWidget,
-    );
+      else if(displayIndex == 12){
+        currentWidget = EditProfile(
+            name: user?.fullName ?? "",
+            email: user?.email ?? "",
+            phone: user?.phone ?? "",
+            country: user?.country ?? "",
+            wilaya: user?.wilaya ?? "",
+            onBack: () => setState(() => displayIndex = 4),
+        );
+    }
+      else{
+
+        currentWidget = pages[displayIndex < pages.length ? displayIndex : 0];
+      }
+      return MainScaffold(
+        currentIndex: navbarIndex,
+        onTap: (index) {
+          setState(() {
+            navbarIndex = index;
+            displayIndex = index;
+            // if (index != 0) selectedRestaurant = null;
+          });
+        },
+        child: currentWidget,
+      );
+    }
   }
-}
+

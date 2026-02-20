@@ -8,8 +8,12 @@ import 'package:bena_food/Feature/Admin/Orders/order_details_page.dart';
 import 'package:bena_food/Feature/Admin/admin_home_page.dart';
 import 'package:bena_food/Feature/Admin/edit_restaurant_page.dart';
 import 'package:bena_food/Feature/Admin/restaurant_details_page.dart';
+import 'package:bena_food/Feature/Edit/Edit%20Profile/edit_profile.dart';
+import 'package:bena_food/Feature/Edit/Forgot%20Password/forgot_password.dart';
+import 'package:bena_food/Feature/Profile/manager/home_cubit.dart';
 import 'package:bena_food/Feature/Profile/profile_user/user_profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdminLayout extends StatefulWidget {
   const AdminLayout({super.key});
@@ -26,42 +30,68 @@ class _AdminLayoutState extends State<AdminLayout> {
   Map<String, dynamic>? selectedOrderData;
 
   @override
+  void initState() {
+    super.initState();
+    context.read<HomeCubit>().getProfile();
+  }
+  @override
   Widget build(BuildContext context) {
-
+    final user = context.watch<HomeCubit>().state.userModel;
     final List<Widget> mainPages = [
       AdminHomePage(
-        onEdit: (data) => setState(() { selectedRestaurant = data; displayIndex = 5; }),
-        onView: (data) => setState(() { selectedRestaurant = data; displayIndex = 6; }),
+        onEdit: (data) => setState(() {
+          selectedRestaurant = data;
+          displayIndex = 5;
+        }),
+        onView: (data) => setState(() {
+          selectedRestaurant = data;
+          displayIndex = 6;
+        }),
       ),
       AdminOrderPage(
-      onBack: () {
-    setState(() {
-    displayIndex = 0;
-    navbarIndex = 0;
-    });
-    },
-        onOrderView: (order) => setState(() { selectedOrderData = order; displayIndex = 10; }),
+        onBack: () {
+          setState(() {
+            displayIndex = 0;
+            navbarIndex = 0;
+          });
+        },
+        onOrderView: (order) => setState(() {
+          selectedOrderData = order;
+          displayIndex = 10;
+        }),
       ),
       AddRestaurantPage(
         onBack: () {
-    setState(() {
-    displayIndex = 0;
-    navbarIndex = 0;
-    });
-    },
+          setState(() {
+            displayIndex = 0;
+            navbarIndex = 0;
+          });
+        },
       ),
       selectedRestaurant != null
           ? FoodList(
-        restaurantId: selectedRestaurant!['id'],
-        restaurantName: selectedRestaurant!['name'],
-        onBack: () => setState(() { displayIndex = 0; navbarIndex = 0; }),
-        onAddFood: () => setState(() => displayIndex = 8),
-        onEditFood: (food) => setState(() { selectedFoodData = food; displayIndex = 9; }),
-      )
+              restaurantId: selectedRestaurant!['id'],
+              restaurantName: selectedRestaurant!['name'],
+              onBack: () => setState(() {
+                displayIndex = 0;
+                navbarIndex = 0;
+              }),
+              onAddFood: () => setState(() => displayIndex = 8),
+              onEditFood: (food) => setState(() {
+                selectedFoodData = food;
+                displayIndex = 9;
+              }),
+            )
           : Center(child: Text("Please select a restaurant from Home first")),
-      UserProfilePage(),
+      UserProfilePage(
+        onForgotPasswordTap: () {
+          setState(() {
+            displayIndex = 11;
+          });
+        },
+        onEditProfileTap: ()=> setState(() => displayIndex =12),
+      ),
     ];
-
 
     Widget currentWidget;
 
@@ -82,7 +112,10 @@ class _AdminLayoutState extends State<AdminLayout> {
         restaurantName: selectedRestaurant!['name'],
         onBack: () => setState(() => displayIndex = 6),
         onAddFood: () => setState(() => displayIndex = 8),
-        onEditFood: (food) => setState(() { selectedFoodData = food; displayIndex = 9; }),
+        onEditFood: (food) => setState(() {
+          selectedFoodData = food;
+          displayIndex = 9;
+        }),
       );
     } else if (displayIndex == 8 && selectedRestaurant != null) {
       currentWidget = AddFood(
@@ -100,11 +133,25 @@ class _AdminLayoutState extends State<AdminLayout> {
         order: selectedOrderData!,
         onBack: () => setState(() => displayIndex = 1),
       );
-    } else {
-
-      currentWidget = mainPages[displayIndex < mainPages.length ? displayIndex : 0];
+    } else if(displayIndex == 11){
+        currentWidget = ForgotPassword(
+          fromProfile: true,
+        );
+      }
+    else if(displayIndex == 12){
+      currentWidget = EditProfile(
+        name: user?.fullName ?? "",
+        email: user?.email ?? "",
+        phone: user?.phone ?? "",
+        country: user?.country ?? "",
+        wilaya: user?.wilaya ?? "",
+        onBack: () => setState(() => displayIndex = 4),
+      );
     }
-
+    else{
+      currentWidget =
+          mainPages[displayIndex < mainPages.length ? displayIndex : 0];
+    }
 
     return MainScaffoldAdmin(
       currentIndex: navbarIndex,
@@ -114,10 +161,7 @@ class _AdminLayoutState extends State<AdminLayout> {
           displayIndex = index;
         });
       },
-      child: Material(
-        color: Colors.white,
-        child: currentWidget,
-      ),
+      child: Material(color: Colors.white, child: currentWidget),
     );
   }
 }

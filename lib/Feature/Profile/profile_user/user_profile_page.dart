@@ -10,11 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserProfilePage extends StatelessWidget {
-  const UserProfilePage({super.key});
+  final VoidCallback onForgotPasswordTap;
+  final VoidCallback onEditProfileTap;
+  const UserProfilePage({super.key,required this.onForgotPasswordTap,required this.onEditProfileTap});
 
   @override
   Widget build(BuildContext context) {
-    context.read<HomeCubit>().getProfile();
+    //context.read<HomeCubit>().getProfile();
     return Scaffold(
       backgroundColor: AppColors.white,
       body: BlocBuilder<HomeCubit, HomeState>(
@@ -100,35 +102,14 @@ class UserProfilePage extends StatelessWidget {
                     text: "Edit Profile",
                     color: AppColors.primary,
                     textColor: AppColors.white,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfile(
-                            name: user?.fullName ?? "",
-                            email: user?.email ?? "",
-                            phone: user?.phone ?? "",
-                            country: user?.country ?? "",
-                            wilaya: user?.wilaya ?? "",
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: onEditProfileTap,
                   ),
                   SizedBox(height: 15),
                   CunstomButton(
                     text: "Forgot Password",
                     color: AppColors.primary,
                     textColor: AppColors.white,
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ForgotPassword(),
-                        ),
-                        (route) => false,
-                      );
-                    },
+                    onPressed: onForgotPasswordTap,
                   ),
                   SizedBox(height: 15),
                   CunstomButton(
@@ -136,6 +117,7 @@ class UserProfilePage extends StatelessWidget {
                     color: AppColors.secondary,
                     textColor: AppColors.primary,
                     onPressed: () {
+
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginPage()),

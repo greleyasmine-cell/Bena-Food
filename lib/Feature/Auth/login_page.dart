@@ -45,6 +45,7 @@ class LoginPage extends StatelessWidget {
                 textColor: AppColors.black,
                 controller: emailController,
                 prefixIcon: Icons.email_rounded,
+                textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'null';
@@ -64,6 +65,7 @@ class LoginPage extends StatelessWidget {
                 textColor: AppColors.black,
                 obscureText: true,
                 isPassword: true,
+                textInputAction: TextInputAction.done,
                 validator: (value) {
                   if ((value?.length ?? 0) < 3) {
                     return "Please Enter more 3 Car";

@@ -110,7 +110,7 @@ class SignUpProfilePage extends StatelessWidget {
                   BlocConsumer<AuthCubit, AuthState>(
                     listener: (context, state) {
                       if (state.registerStatus == RegisterStatus.success) {
-                        if(state.userType ==  'Restaurant Owner'){
+                        if(state.userType?.trim() ==  'Restaurant Owner'){
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

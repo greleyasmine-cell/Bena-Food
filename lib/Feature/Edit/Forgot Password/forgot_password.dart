@@ -1,6 +1,8 @@
 import 'package:bena_food/Core/Colors/app_colors.dart';
 import 'package:bena_food/Core/Componants/custom_button.dart';
 import 'package:bena_food/Core/Componants/custom_textfield.dart';
+import 'package:bena_food/Core/Componants/main%20scaffold%20user/user_layout.dart';
+import 'package:bena_food/Feature/Auth/login_page.dart';
 import 'package:bena_food/Feature/Edit/Forgot%20Password/manager/edit_password_cubit.dart';
 import 'package:bena_food/Feature/Edit/Forgot%20Password/manager/edit_password_state.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ForgotPassword extends StatelessWidget {
-  ForgotPassword({super.key});
+  final bool fromProfile;
+  ForgotPassword({super.key,this.fromProfile = false,});
   final emailController = TextEditingController();
   final currentPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
@@ -115,7 +118,7 @@ class ForgotPassword extends StatelessWidget {
                           gravity: ToastGravity.BOTTOM,
                         );
                         Navigator.pushAndRemoveUntil(context,
-                            MaterialPageRoute(builder: (context) => ForgotPassword()),
+                            MaterialPageRoute(builder: (context) => fromProfile ? UserLayout() : LoginPage()),
                             (route) => false);
                       }else if(state.status == EditPasswordStatus.failure){
                         Fluttertoast.showToast(msg: "The process failed, please check your data",
@@ -156,7 +159,15 @@ class ForgotPassword extends StatelessWidget {
                 text: "Cancel",
                 color: AppColors.secondary,
                 textColor: AppColors.black,
-                onPressed: () => Navigator.pop(context),
+                onPressed: (){
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => fromProfile ? UserLayout() : LoginPage(),
+                    ),
+                        (route) => false,
+                  );
+                },
               ),
             ],
           ),

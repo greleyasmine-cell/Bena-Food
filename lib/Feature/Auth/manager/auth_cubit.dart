@@ -17,27 +17,29 @@ class AuthCubit extends Cubit<AuthState> {
 
   void updateCountry(String country) => selectedCountry = country;
   void updateWilaya(String wilaya) => selectedWilaya = wilaya;
-  void updateType(String type) => selectedType = type;
+  void updateType(String type) {
+    selectedType = type;
+    emit(state.copyWith(userType: type));
+  }
 
-  // --- دالة تسجيل الدخول المعدلة ---
+
   Future<void> login({required String email, required String password}) async {
     emit(state.copyWith(loginStatus: LoginStatus.loading));
 
-    // 1. تسجيل الدخول عبر Firebase Auth
+
     auth.signInWithEmailAndPassword(email: email, password: password).then((value) {
 
-      // 2. جلب بيانات المستخدم من Firestore بعد نجاح الـ Auth
-      firestore.collection('users').doc(value.user?.uid).get().then((userDoc) {
+         firestore.collection('users').doc(value.user?.uid).get().then((userDoc) {
         if (userDoc.exists) {
-          // استخراج نوع المستخدم (Admin أو User)
+
           String type = userDoc.get('userType') ?? 'User';
           String name = userDoc.data()?['fullName'] ?? 'Restaurant Owner';
           value.user?.updateDisplayName(name);
-          // 3. تحديث الحالة بالنجاح مع نوع المستخدم
+
           emit(state.copyWith(
             loginStatus: LoginStatus.success,
             userType: type,
-
+            userName: name,
           ));
         } else {
           emit(state.copyWith(
@@ -63,7 +65,7 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  // --- دالة التسجيل ---
+
   void register({
     required String email,
     required String password,
@@ -75,7 +77,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(registerStatus: RegisterStatus.loading));
 
     auth.createUserWithEmailAndPassword(email: email, password: password).then((value) async {
-      // حفظ البيانات في Firestore
+
+      await value.user?.updateDisplayName(firstName);
+      await value.user?.reload();
       await firestore.collection('users').doc(value.user?.uid).set({
         'uid': value.user?.uid,
         'email': email,
@@ -83,10 +87,13 @@ class AuthCubit extends Cubit<AuthState> {
         'phone': phone,
         'country': country,
         'wilaya': wilaya,
-        'userType': selectedType, // تأكدي أن هذا المتغير تم تحديثه قبل نداء register
+        'userType': selectedType,
       });
 
-      emit(state.copyWith(registerStatus: RegisterStatus.success));
+      emit(state.copyWith(registerStatus: RegisterStatus.success,
+      userType: selectedType,
+        userName: firstName,
+      ));
     }).catchError((error) {
       print(error);
       emit(state.copyWith(
@@ -94,5 +101,14 @@ class AuthCubit extends Cubit<AuthState> {
         errorMessage: error.toString(),
       ));
     });
+  }
+
+  void checkAuthStatus(){
+    final user = FirebaseAuth.instance.currentUser;
+    if(user != null){
+      emit(state.copyWith(authStatus: AuthStatus.authenticated));
+    }else{
+      emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
+    }
   }
 }

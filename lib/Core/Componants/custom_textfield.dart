@@ -13,6 +13,7 @@ class CustomTextfield extends StatefulWidget {
   final Color? fillColor;
   final Color? textColor;
   final Color? iconsColor;
+  final TextInputAction? textInputAction;
 
 
 
@@ -29,6 +30,7 @@ class CustomTextfield extends StatefulWidget {
     this.fillColor,
     this.textColor,
     this.iconsColor,
+    this.textInputAction,
   });
 
   @override
@@ -46,6 +48,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     return TextFormField(
       validator: widget.validator,
       controller: widget.controller,
+      textInputAction: widget.textInputAction,
       obscureText: widget.isPassword == true ? isObscureText : false,
       keyboardType: widget.keyboardType,
       style: TextStyle(color: AppColors.black),

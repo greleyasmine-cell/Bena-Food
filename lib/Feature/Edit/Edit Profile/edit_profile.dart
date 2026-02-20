@@ -12,12 +12,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class EditProfile extends StatelessWidget {
   final String name,email,phone,country,wilaya;
+  final VoidCallback onBack;
   EditProfile({super.key,
   required this.name,
     required this.email,
     required this.phone,
     required this.country,
     required this.wilaya,
+    required this.onBack,
   });
 
   @override
@@ -106,9 +108,7 @@ class EditProfile extends StatelessWidget {
                     backgroundColor: Colors.green,
                       textColor: AppColors.white,
                     );
-                    Navigator.pushAndRemoveUntil(context,
-                        MaterialPageRoute(builder: (context) => UserProfilePage()),
-                        (route)=> false);
+                    onBack();
                   }else if(state.status == EditProfileStatus.failure){
                     Fluttertoast.showToast(msg: "Failed to update Profile",
                     backgroundColor: Colors.red,
@@ -141,7 +141,7 @@ class EditProfile extends StatelessWidget {
                 text: "Cancel",
                 color: AppColors.secondary,
                 textColor: AppColors.black,
-                onPressed: () => Navigator.pop(context),
+                onPressed: onBack,
               ),
             ],
           ),
