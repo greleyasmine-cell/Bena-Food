@@ -5,6 +5,7 @@ import 'package:bena_food/Core/Componants/custom_textfield.dart';
 import 'package:bena_food/Core/Helper/app_data.dart';
 import 'package:bena_food/Feature/Edit/Edit%20Profile/manager/edit_profile_cubit.dart';
 import 'package:bena_food/Feature/Edit/Edit%20Profile/manager/edit_profile_state.dart';
+import 'package:bena_food/Feature/Profile/manager/home_cubit.dart';
 import 'package:bena_food/Feature/Profile/profile_user/user_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -108,6 +109,7 @@ class EditProfile extends StatelessWidget {
                     backgroundColor: Colors.green,
                       textColor: AppColors.white,
                     );
+                    context.read<HomeCubit>().getProfile();
                     onBack();
                   }else if(state.status == EditProfileStatus.failure){
                     Fluttertoast.showToast(msg: "Failed to update Profile",

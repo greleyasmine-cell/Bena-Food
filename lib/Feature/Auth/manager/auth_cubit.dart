@@ -111,4 +111,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
     }
   }
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+    emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
+  }
 }

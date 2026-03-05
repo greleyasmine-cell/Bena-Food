@@ -2,6 +2,7 @@ import 'package:bena_food/Core/Colors/app_colors.dart';
 import 'package:bena_food/Core/Componants/custom_button.dart';
 import 'package:bena_food/Core/Widget/info_user.dart';
 import 'package:bena_food/Feature/Auth/login_page.dart';
+import 'package:bena_food/Feature/Auth/manager/auth_cubit.dart';
 import 'package:bena_food/Feature/Edit/Edit%20Profile/edit_profile.dart';
 import 'package:bena_food/Feature/Edit/Forgot%20Password/forgot_password.dart';
 import 'package:bena_food/Feature/Profile/manager/home_cubit.dart';
@@ -116,8 +117,8 @@ class UserProfilePage extends StatelessWidget {
                     text: "Log Out",
                     color: AppColors.secondary,
                     textColor: AppColors.primary,
-                    onPressed: () {
-
+                    onPressed: () async{
+                      await context.read<AuthCubit>().logout();
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginPage()),
