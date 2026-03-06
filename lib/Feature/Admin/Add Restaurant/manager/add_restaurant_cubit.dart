@@ -31,11 +31,11 @@ class AddRestaurantCubit extends Cubit<AddRestaurantState>{
     FirebaseFirestore.instance
         .collection('restaurants')
         .where('adminId',isEqualTo: currentUserId)
-        .orderBy('createdAt',descending: true)
+       // .orderBy('createdAt',descending: true)
         .snapshots()
         .listen((snapshot){
       final list = snapshot.docs
-          .where((doc) => doc.data()['createdAt'] != null)
+         // .where((doc) => doc.data()['createdAt'] != null)
           .map((doc){
         var data = doc.data();
         data['id'] = doc.id;

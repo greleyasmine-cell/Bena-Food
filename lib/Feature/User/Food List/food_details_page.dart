@@ -270,7 +270,9 @@ class FoodDetailsPage extends StatelessWidget {
                           image: food['image'] ?? "",
                           quantity: state.detailQty,
                           ownerId: food['ownerId'] ?? "",
-                          restaurantName: food['restaurantName'] ?? "Unknown Restaurant",
+                          restaurantName: food['restaurantName'] != null && food['restaurantName'] != ""
+                              ? food['restaurantName']
+                              : "Unknown Restaurant",
                         );
                         context.read<CartCubit>().addToCart(cartItem);
                         Fluttertoast.showToast(

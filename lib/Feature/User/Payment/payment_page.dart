@@ -126,8 +126,7 @@ class PaymentPage extends StatelessWidget {
                          context.read<CartCubit>().placeOrder(
                              phone: phoneController.text,
                              address: addressController.text,
-                             restaurantName:restaurantName,
-                           ownerId: ownerId,
+
                          );
                        }else{
                          Fluttertoast.showToast(msg: "Please fill all contact info",

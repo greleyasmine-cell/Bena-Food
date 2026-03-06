@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class UserFoodCubit extends Cubit<UserFoodState>{
   UserFoodCubit(): super(UserFoodState());
 
-  void getRestaurantFoods(String restaurantId){
+  void getRestaurantFoods(String restaurantId, String restaurantName){
     FirebaseFirestore.instance
         .collection('restaurants')
         .doc(restaurantId)
@@ -17,6 +17,8 @@ class UserFoodCubit extends Cubit<UserFoodState>{
       for (var doc in snapshot.docs) {
         var data = doc.data();
         data['id'] = doc.id;
+        data['restaurantName'] = restaurantName;
+        data['ownerId'] = restaurantId;
         foodsList.add(data);
       }
 

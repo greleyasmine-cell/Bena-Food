@@ -17,6 +17,7 @@ class AdminHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<AddRestaurantCubit>().getRestaurants();
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

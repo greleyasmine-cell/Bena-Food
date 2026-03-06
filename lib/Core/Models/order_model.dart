@@ -18,7 +18,7 @@ class OrderModel {
   });
 
 
-  factory OrderModel.fromJson(Map<String, dynamic> json) {
+  factory OrderModel.fromJson(Map<String, dynamic> json,{String? docId}) {
     String formatTimestamp(dynamic timestamp) {
       if (timestamp is Timestamp) {
         return timestamp.toDate().toString().substring(0, 16);
@@ -30,7 +30,7 @@ class OrderModel {
       }
     }
     return OrderModel(
-      orderId: json['orderId'] ?? '',
+      orderId: docId ?? json['orderId'] ?? '',
       restaurantName: json['restaurantName'] ?? 'Restaurant',
       status: json['status'] ?? 'Pending',
       total: (json['total'] ?? 0).toDouble(),

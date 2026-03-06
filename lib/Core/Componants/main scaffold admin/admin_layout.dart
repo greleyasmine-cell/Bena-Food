@@ -49,6 +49,7 @@ class _AdminLayoutState extends State<AdminLayout> {
         }),
       ),
       AdminOrderPage(
+        restaurantName: selectedRestaurant?['name'] ?? "Restaurante",
         onBack: () {
           setState(() {
             displayIndex = 0;

@@ -48,11 +48,12 @@ class CartCubit extends Cubit<CartState> {
   Future<void> placeOrder({
     required String phone,
     required String address,
-    required String restaurantName,
-    required String ownerId,
+
   }) async {
 
     if (state.cartItems.isEmpty) return;
+    final String restaurantName = state.cartItems.first.restaurantName;
+    final String ownerId = state.cartItems.first.ownerId;
 
     emit(state.copyWith(status: CartStatus.loading));
     try {

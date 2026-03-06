@@ -19,7 +19,7 @@ class UserFoodList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<UserFoodCubit>().getRestaurantFoods(restaurantId);
+    context.read<UserFoodCubit>().getRestaurantFoods(restaurantId, restaurantName);
     return SafeArea(child: Column(
 
       children: [

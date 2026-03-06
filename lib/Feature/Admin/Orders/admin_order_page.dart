@@ -6,15 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdminOrderPage extends StatelessWidget {
-  final String restaurantName = "Restaurante";
+  final String restaurantName;
   final VoidCallback onBack;
   final Function(Map<String, dynamic>) onOrderView;
 
-  const AdminOrderPage({super.key, required this.onOrderView,required this.onBack});
+  const AdminOrderPage({super.key,
+    required this.restaurantName,
+    required this.onOrderView,required this.onBack});
 
   @override
   Widget build(BuildContext context) {
-   context.read<AdminOrderCubit>().fetchOrdersRealTime(restaurantName);
+    context.read<AdminOrderCubit>().fetchOrdersRealTime();
     return SafeArea(
       child: BlocBuilder<AdminOrderCubit, AdminOrderState>(
         builder: (context, state) {
